@@ -1,0 +1,20 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Foodscan",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Food",
+    "Scan"
+  ],
+  "author": "Parth Bhodia",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "instascan": "^1.0.0",
+    "quagga": "^0.12.1"
+  }
+}

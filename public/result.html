@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Food Details</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&family=Montserrat&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <div id="app">
+      <div class="middle">
+        <!-- If there are any flash messages, show them -->
+        <p class="err">{{ errorMessage }}</p>
+
+        <!-- If a food item was found, display its details -->
+        <h1 class="title" v-if="food">{{ food.product_name }}</h1>
+        <img v-if="food" :src="food.image_url" alt="Food Image">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container my-5">
+            <h1 class="text-center">Search</h1>
+            <form id="search-form" class="my-3">
+                <div class="form-group">
+                    <label for="barcode">Barcode</label>
+                    <input type="text" class="form-control" id="barcode" name="barcode" placeholder="Enter barcode number">
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+            <div id="result" class="mt-5">
+                <h2 class="text-center" v-if="errorMessage">{{ errorMessage }}</h2>
+                <div v-else-if="!food">
+                    <h2 class="text-center">No data available.</h2>
+                </div>
+                <div v-else>
+
+                           
+                            <div class="container-fluid">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <h1>Food Item Details</h1>
+                                    <hr>
+                              
+                                    <table class="table table-bordered">
+                                      <tbody>
+                                        <tr>
+                                          <th>UPC Code</th>
+                                          <td>{{ food.code }}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Product Name</th>
+                                          <td>{{ food.product_name }}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Categories</th>
+                                          <td>{{ food.categories }}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Brand</th>
+                                          <td>{{ food.brand_owner }}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Allergy Information</th>
+                                          <td>{{ food.allergens || "Not Available" }}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Vegan</th>
+                                          <td>{{ food.vegan ? "Yes" : "No" }}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Vegetarian</th>
+                                          <td>{{ food.vegetarian ? "Yes" : "No" }}</td>
+                                        </tr>
+                                        <tr>
+                                          <th>Ultra Processed</th>
+                                          <td>{{ food.nova_group == 4 ? "Yes" : "No" }}</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+
+                                 
+                                    <div class="col-md-12">
+                                        <h1>Nutrition Information Per 100gm</h1>
+                                        <hr>
+                                        <tbody>
+                                            <table>
+                                        <table class="table table-bordered">
+                                          <tbody>
+                                            <tr>
+                                              <th>Energy:</th>
+                                              <td>{{ food.nutriments["energy-kcal"] }} kcal</td>
+                                            </tr>
+                                            <tr>
+                                              <th>Protein:</th>
+                                              <td>{{ food.nutriments.proteins_100g }} g</td>
+                                            </tr>
+                                            <tr>
+                                              <th>Carbohydrates:</th>
+                                              <td>{{ food.nutriments.carbohydrates }} g</td>
+                                            </tr>
+                                            <tr>
+                                              <th>Fat:</th>
+                                              <td>{{ food.nutriments.fat }} g</td>
+                                            </tr>
+                                              <tr>
+                                                <th>Saturated Fat (g)</th>
+                                                <td>{{ food.nutriments["saturated-fat"] || "Not Available" }}</td>
+                                              </tr>
+                                              <tr>
+                                                <th>Sugar (g)</th>
+                                                <td>{{ food.nutriments.sugars || "Not Available" }}</td>
+                                              </tr>
+                                              <tr>
+                                                <th>Sodium (mg)</th>
+                                                <td>{{ food.nutriments.sodium || "Not Available" }}</td>
+                                              </tr>
+                                          </tbody>
+                                        </table>
+                                
+                                  </div>
+                                </div>
+
+      </div>
+    </div>
+
+    <script>
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            food: null,
+            errorMessage: null,
+          };
+        },
+        async created() {
+          const barcode = new URLSearchParams(window.location.search).get('barcode');
+          if (barcode) {
+            try {
+              const response = await $.getJSON(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+              if (response.product) {
+                this.food = response.product;
+              } else {
+                this.errorMessage = `No food item found for barcode ${barcode}`;
+              }
+            } catch (error) {
+              this.errorMessage = error.message;
+            }
+          } else {
+            this.errorMessage = 'No barcode provided';
+          }
+        },
+      }).mount('#app');
+    </script>
+  </body>
+</html>

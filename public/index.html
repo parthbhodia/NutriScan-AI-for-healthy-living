@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Dynamsoft JavaScript Barcode Scanner</title>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.0.0/dist/dbr.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+    </head>
+    <body>
+        <div id="camera"></div>
+        <div id="result"></div>    
+    </body>
+    </html>
+<script>
+    // Initialize the Quagga.js scanner
+    Quagga.init({
+      inputStream : {
+        name : "Live",
+        type : "LiveStream",
+        target: document.querySelector('#camera')    // Use the container element for the camera video
+      },
+      decoder : {
+        readers : ["ean_reader"]                      // Only decode EAN barcodes
+      }
+    }, function(err) {
+        if (err) {
+            console.log(err);
+            return
+        }
+        console.log("Quagga.js initialization finished.");
+        Quagga.start();                                // Start the scanner
+    });
+  
+    // Set up event listener to handle decoded barcodes
+    Quagga.onDetected(function(result) {
+      let code = result.codeResult.code;
+      let output = document.querySelector('#result');
+      output.textContent = code;                      // Display the decoded barcode in the output element
+      Quagga.stop();                                  // Stop the scanner
+      window.location.href = `/result?barcode=${encodeURIComponent(code)}`; // Redirect to result page with scanned content as a query parameter
+    });
+  </script>
+   <style>
+    /* body {
+      margin: 0;
+      padding: 0;
+      background-color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+     */
+    /* .scanner {
+      background-color: #eee;
+      width: 400px;
+      height: 300px;
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+    } */
+    
+    .laser {
+      width: 100%;
+      height: 3px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ff0;
+      animation: laser 2s infinite;
+      z-index: 1;
+    }
+    
+    @keyframes laser {
+      0% {
+        left: -10%;
+      }
+      100% {
+        left: 110%;
+      }
+    }
+    
+    .scan-line {
+      width: 100%;
+      height: 3px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: rgba(255, 255, 255, 0.4);
+      animation: scan 3s infinite;
+      z-index: 1;
+    }
+    
+    @keyframes scan {
+      0% {
+        transform: translateY(-100%);
+      }
+      100% {
+        transform: translateY(100%);
+      }
+    }
+    
+    /* .camera {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    } */
+    
+    /* .label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 10px;
+      font-size: 24px;
+      border-radius: 5px;
+      z-index: 2;
+    } */
+  </style>
