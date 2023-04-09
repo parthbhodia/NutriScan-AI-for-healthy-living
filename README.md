@@ -32,4 +32,4 @@ This app uses the following dependencies:
 
 ## Credits
 
-This app was created by [your name] and is licensed under the MIT license. Feel free to use it and modify it as needed.
+This app was created by Parth Bhodia, Siddhant Gupta, Kulin Patel, and Kruten Patel and is licensed under the MIT license. Feel free to use it and modify it as needed.
